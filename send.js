@@ -28,7 +28,7 @@ let smtp = {
 let message = {
   name: "#",
   fromEmail: "#",
-  subject: "#" + rn(rand),
+  subject: "#",
   letter: fs.readFileSync("message.html", "utf-8"),
 };
 
