@@ -18,7 +18,7 @@ let rand = {
 let smtp = {
   host: "#",
   email: "#",
-  password: "kuching@123",
+  password: "#",
   port: "#",
   secure: false, // true for 465, false for other ports
 };
