@@ -6,4 +6,5 @@ Before run send.js :
 2. <code>npm install fs</code>
 3. <code>npm install random-number</code>
 
-Put your list email on "email.txt", and message on message.html
+Put your list email on "email.txt", and the message on "message.html"
+
