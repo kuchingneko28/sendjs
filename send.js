@@ -13,6 +13,7 @@ let rand = {
   max: 9999999,
   integer: true,
 };
+// how to call random : rn(rand);
 
 // smtp config
 let smtp = {
