@@ -21,12 +21,12 @@ let message = {
   name: "#",
   fromEmail: "#",
   letter: "letter.html", // letter path
-  url: "http://google.com/", // url scampage, taruh ##short## di href
+  url: "http://google.com/", // url =  ##url##
   delaySend: 5000, // delay send, 1000 = 1 seconds
   pilihRandom: "number", // text = random text, number = random number
-  randomText: 10, // panjang karakter random text
-  randomNumber: 10, // panjang karakter random number
-  attachment: "", // attachment file, kalo g mau pake attachment jangan di isi apapun
+  randomText: 10, // lenght random text
+  randomNumber: 10, // lenght random number
+  attachment: "", // leave blank if not using attchment file
 };
 // Letter
 let letter = fs.readFileSync(message.letter, "utf-8");
