@@ -1,97 +1,141 @@
 // library
 const nodemailer = require("nodemailer");
 const fs = require("fs");
-const rn = require("random-number");
+const rs = require("randomstring");
 
-// get email list
+// email list dari text file "email.txt"
 let mail = fs.readFileSync("email.txt", "utf-8");
 let listEmail = mail.split(/\r?\n/);
-
-// random
-let rand = {
-  min: 1,
-  max: 9999999,
-  integer: true,
-};
-// how to call random : rn(rand);
 
 // smtp config
 let smtp = {
   host: "#",
   email: "#",
   password: "#",
-  port: "#",
-  secure: false, // true for 465, false for other ports
+  port: "587",
+  secure: false, // true untuk port 465, false untuk port yang lain contoh 587
 };
 
 // message config
 let message = {
   name: "#",
   fromEmail: "#",
-  subject: "#",
-  letter: fs.readFileSync("message.html", "utf-8"),
+  letter: "letter.html", // letter path
+  url: "http://google.com/", // url scampage, taruh ##short## di href
+  delaySend: 5000, // delay send, 1000 = 1 seconds
+  pilihRandom: "number", // text = random text, number = random number
+  randomText: 10, // panjang karakter random text
+  randomNumber: 10, // panjang karakter random number
+  attachment: "", // attachment file, kalo g mau pake attachment jangan di isi apapun
+};
+// Letter
+let letter = fs.readFileSync(message.letter, "utf-8");
+
+// Subject baru untuk random
+let subject = () => {
+  let random = rand(message.pilihRandom);
+
+  // subject random
+  return {
+    subject: `tes tes ${random}`,
+  };
+};
+
+// Untuk random
+let rand = (input) => {
+  let randomText = rs.generate({
+    length: message.randomText,
+    capitalization: "lowercase",
+  });
+  let randomNumber = rs.generate({
+    charset: "numeric",
+    length: message.randomNumber,
+  });
+
+  return input === "text" ? randomText : input === "number" ? randomNumber : console.log("Yang kamu masukan salah!");
 };
 
 // send config
-async function main() {
+let main = async () => {
   let emailPromiseArray = [];
 
-  // sleep function
+  // sleep
   let sleep = (ms) => {
     return new Promise((resolve) => {
       setTimeout(resolve, ms);
     });
   };
 
-  // get smtp config for send
   let transporter = nodemailer.createTransport({
-    host: smtp["host"],
-    port: smtp["port"],
-    secure: smtp["secure"],
+    host: smtp.host,
+    port: smtp.port,
+    secure: smtp.secure,
     auth: {
-      user: smtp["email"],
-      pass: smtp["password"],
-    },
-    tls: {
-      ciphers: "SSLv3",
+      user: smtp.email,
+      pass: smtp.password,
     },
   });
 
   try {
     for (let i = 0; i < listEmail.length; i++) {
-      // ready to send
-      let send = await transporter.sendMail({
-        from: `${message["name"]} <${message["fromEmail"]}>`,
-        to: listEmail[i],
-        subject: message["subject"],
-        html: message["letter"],
-      });
+      let newLetter = letter.search("##") > 0 ? checkComment(letter) : letter;
+      let subjectBaru = subject();
+      const send = filterSend(message.attachment);
 
-      // get the send response,and put in to array
-      await emailPromiseArray.push(send);
+      function checkComment(input) {
+        const match = {
+          "##short##": message.url,
+          "##email##": listEmail[i],
+        };
 
-      // print response to log
+        return input.replace(/##short##/, match["##short##"]).replace(/##email##/, match["##email##"]);
+      }
+
+      async function filterSend(attach) {
+        if (attach.toString().length > 0) {
+          let sendAttach = await transporter.sendMail({
+            from: `${message.name} <${message.fromEmail}>`,
+            to: listEmail[i],
+            subject: subjectBaru.subject,
+            html: newLetter,
+            attachments: {
+              path: message.attachment,
+            },
+          });
+          return sendAttach;
+        } else {
+          let send = await transporter.sendMail({
+            from: `${message.name} <${message.fromEmail}>`,
+            to: listEmail[i],
+            subject: subjectBaru.subject,
+            html: newLetter,
+          });
+
+          return send;
+        }
+      }
+
+      emailPromiseArray.push(send);
+
       Promise.all(emailPromiseArray)
         .then((result) => {
-          console.log(`[+] Success ! [+]`);
-          console.log(`- Email send: : ${result[i]["accepted"]}`);
+          console.log(`[+] Spammed ! [+]`);
+          console.log(`- Email send: : ${result[i].accepted}`);
           console.log(`- Total email: : ${i} - ${listEmail.length} email`);
           console.log(`[+] Message [+]`);
-          console.log(`- From name: ${message["name"]}`);
-          console.log(`- From email: ${message["fromEmail"]}`);
-          console.log(`- Subject: ${message["subject"]}`);
-          console.log(`- Response: ${result[i]["response"]}`);
+          console.log(`- From name: ${message.name}`);
+          console.log(`- From email: ${message.fromEmail}`);
+          console.log(`- Subject: ${subjectBaru.subject}`);
+          console.log(`- Response: ${result[i].response}`);
         })
         .catch((error) => {
           console.log(error.message);
         });
-      // delay send, 3000 = 3 seconds
-      await sleep(3000);
+      await sleep(message.delaySend);
     }
   } catch (e) {
     console.log(e.message);
   }
-}
+};
 
-// run the sender
 main();
