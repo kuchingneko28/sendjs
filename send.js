@@ -12,14 +12,14 @@ let smtp = {
   host: "#",
   email: "#",
   password: "#",
-  port: "587",
+  port: "#",
   secure: false, // true untuk port 465, false untuk port yang lain contoh 587
 };
 
 // message config
 let message = {
-  name: "#",
-  fromEmail: "#",
+  name: "#", // name
+  fromEmail: "#", // from email
   letter: "letter.html", // letter path
   url: "http://google.com/", // url =  ##url##
   delaySend: 5000, // delay send, 1000 = 1 seconds
@@ -27,6 +27,8 @@ let message = {
   randomText: 10, // lenght random text
   randomNumber: 10, // lenght random number
   attachment: "", // leave blank if not using attchment file
+  
+  // note : input subject at line 48
 };
 // Letter
 let letter = fs.readFileSync(message.letter, "utf-8");
@@ -35,7 +37,7 @@ let letter = fs.readFileSync(message.letter, "utf-8");
 let subject = () => {
   let random = rand(message.pilihRandom);
 
-  // subject random
+  // input subject here 
   return {
     subject: `tes tes ${random}`,
   };
