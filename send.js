@@ -28,7 +28,7 @@ let message = {
   randomNumber: 10, // lenght random number
   attachment: "", // leave blank if not using attchment file
   
-  // note : input subject at line 48
+  // note : input subject at line 38
 };
 // Letter
 let letter = fs.readFileSync(message.letter, "utf-8");
