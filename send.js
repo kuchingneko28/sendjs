@@ -1,4 +1,3 @@
-// library
 const nodemailer = require("nodemailer");
 const fs = require("fs");
 const rs = require("randomstring");
@@ -43,7 +42,7 @@ let subject = () => {
   };
 };
 
-// Untuk random
+// random
 let rand = (input) => {
   let randomText = rs.generate({
     length: message.randomText,
@@ -121,7 +120,7 @@ let main = async () => {
 
       Promise.all(emailPromiseArray)
         .then((result) => {
-          console.log(`[+] Spammed ! [+]`);
+          console.log(`[+] Send ! [+]`);
           console.log(`- Email send: : ${result[i].accepted}`);
           console.log(`- Total email: : ${i} - ${listEmail.length} email`);
           console.log(`[+] Message [+]`);
